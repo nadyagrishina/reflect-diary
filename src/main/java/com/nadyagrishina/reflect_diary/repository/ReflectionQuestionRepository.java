@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ReflectionQuestionRepository extends JpaRepository<ReflectionQuestion, Long> {
-    @Query("SELECT q FROM ReflectionQuestion q ORDER BY function('RAND') LIMIT 1")
+    @Query(value = "SELECT * FROM reflection_questions ORDER BY RAND() LIMIT 1", nativeQuery = true)
     ReflectionQuestion findRandom();
 }
