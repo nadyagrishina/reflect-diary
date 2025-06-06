@@ -1,13 +1,12 @@
 package com.nadyagrishina.reflect_diary.service.service_impl;
 
-import com.nadyagrishina.reflect_diary.DTO.UserRequestDTO;
-import com.nadyagrishina.reflect_diary.DTO.UserResponseDTO;
-import com.nadyagrishina.reflect_diary.mapper.UserMapper;
 import com.nadyagrishina.reflect_diary.model.User;
 import com.nadyagrishina.reflect_diary.repository.UserRepository;
 import com.nadyagrishina.reflect_diary.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,42 +15,41 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
-    public List<UserResponseDTO> findAllUsers() {
-        List<User> users = userRepository.findAll();
-        return users.stream().map(userMapper::toDTO).toList();
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
     }
 
     @Override
-    public UserResponseDTO findById(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
-        return userMapper.toDTO(user);
-    }
-
-
-    @Override
-    @Transactional
-    public UserResponseDTO save(UserRequestDTO userRequestDTO) {
-        User user = userMapper.toEntity(userRequestDTO);
-        userRepository.save(user);
-        return userMapper.toDTO(user);
+    public User findById(Long id) {
+        return userRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("User with id " + id + " not found")
+        );
     }
 
     @Override
     @Transactional
-    public UserResponseDTO updateUser(Long id, UserRequestDTO userRequestDTO) {
-        User user = userRepository.findById(id)
+    public User save(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public User updateUser(Long id, User user) {
+        User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
-        userMapper.updateUserFromDTO(user, userRequestDTO);
-        return userMapper.toDTO(user);
+        existingUser.setUsername(user.getUsername());
+        existingUser.setEmail(user.getEmail());
+        existingUser.setPassword(user.getPassword());
+        return userRepository.save(existingUser);
     }
 
     @Override
@@ -63,9 +61,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO findByUsername(String username) {
-        User user = userRepository.findByUsername(username)
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with username: " + username));
-        return userMapper.toDTO(user);
+    }
+    @Override
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
     }
 }

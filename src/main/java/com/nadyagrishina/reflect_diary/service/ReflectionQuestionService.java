@@ -1,7 +1,8 @@
 package com.nadyagrishina.reflect_diary.service;
 
-import com.nadyagrishina.reflect_diary.DTO.ReflectionQuestionDTO;
+import com.nadyagrishina.reflect_diary.model.ReflectionQuestion;
 
 public interface ReflectionQuestionService {
-    ReflectionQuestionDTO getRandomQuestion();
+    ReflectionQuestion getRandomQuestion();
+    ReflectionQuestion findById(Long id);
 }
