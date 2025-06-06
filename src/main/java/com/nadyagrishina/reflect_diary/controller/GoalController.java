@@ -1,49 +1,95 @@
 package com.nadyagrishina.reflect_diary.controller;
 
-import com.nadyagrishina.reflect_diary.DTO.GoalDTO;
+import com.nadyagrishina.reflect_diary.model.Goal;
+import com.nadyagrishina.reflect_diary.model.User;
 import com.nadyagrishina.reflect_diary.service.GoalService;
+import com.nadyagrishina.reflect_diary.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
-@RestController
-@RequestMapping("api/goals")
+@Controller
+@RequestMapping("/goals")
 public class GoalController {
 
     private final GoalService goalService;
+    private final UserService userService;
 
-    public GoalController(GoalService goalService) {
+    public GoalController(GoalService goalService, UserService userService) {
         this.goalService = goalService;
+        this.userService = userService;
     }
 
     @GetMapping
-    public List<GoalDTO> getAllGoals() {
-        return goalService.findAllGoals();
+    public String getAllGoals(Model model, Principal principal) {
+        Long id = userService.findByUsername(principal.getName()).getId();
+        List<Goal> goals = goalService.findAllGoalsByUserId(id);
+        model.addAttribute("goals", goals);
+        return "goals";
     }
 
-    @GetMapping("{goalId}")
-    public GoalDTO getGoalById(@PathVariable Long goalId) {
-        return goalService.findGoalById(goalId);
+    @GetMapping("/create")
+    public String showCreateForm(Model model) {
+        model.addAttribute("goal", new Goal());
+        return "create-goal";
     }
 
-    @PostMapping
-    public GoalDTO createGoal(@RequestBody @Valid GoalDTO goalDTO) {
-        return goalService.save(goalDTO);
+    @PostMapping("/create")
+    public String createGoal(@ModelAttribute Goal goal, Principal principal) {
+        User user = userService.findByUsername(principal.getName());
+        goal.setUser(user);
+        goalService.save(goal);
+        return "redirect:/goals";
     }
 
-    @PutMapping("{goalId}")
-    public GoalDTO updateGoal(@PathVariable Long goalId, @RequestBody @Valid GoalDTO goalDTO) {
-        return goalService.updateGoal(goalId, goalDTO);
+    @PostMapping("/{id}/toggle")
+    public String toggleGoalStatus(@PathVariable Long id,
+                                   Principal principal,
+                                   @RequestHeader(value = "Referer", required = false) String referer) {
+        Goal goal = goalService.findGoalById(id);
+        if (!goal.getUser().getUsername().equals(principal.getName())) {
+            return "redirect:/access-denied";
+        }
+        goal.setCompleted(!goal.isCompleted());
+        goalService.save(goal);
+        return "redirect:" + (referer != null ? referer : "/goals");
     }
 
-    @DeleteMapping("{goalId}")
-    public void deleteGoal(@PathVariable Long goalId) {
-        goalService.deleteGoal(goalId);
+
+
+    @GetMapping("/{id}/edit")
+    public String editGoal(@PathVariable Long id, Model model) {
+        Goal goal = goalService.findGoalById(id);
+
+
+
+        model.addAttribute("goal", goal);
+        model.addAttribute("formAction", "/goals/update");
+        return "create-goal";
     }
 
-    @GetMapping("/by-user/{userId}")
-    public List<GoalDTO> getGoalsByUserId(@PathVariable Long userId) {
-        return goalService.findAllGoalsByUserId(userId);
+    @PostMapping("/update")
+    public String updateGoal(@ModelAttribute Goal goal, Principal principal) {
+        Goal original = goalService.findGoalById(goal.getId());
+        if (!original.getUser().getUsername().equals(principal.getName())) {
+            return "redirect:/goals";
+        }
+
+        original.setDescription(goal.getDescription());
+        original.setDeadline(goal.getDeadline());
+        original.setCompleted(goal.isCompleted());
+
+        goalService.save(original);
+        return "redirect:/goals";
+    }
+
+    @PostMapping("/{id}/delete")
+    public String deleteGoal(@PathVariable Long id) {
+        goalService.deleteGoal(id);
+        return "redirect:/goals";
     }
 }

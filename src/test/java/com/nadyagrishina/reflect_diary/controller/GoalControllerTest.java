@@ -18,7 +18,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class GoalControllerTest {
+class GoalControllerTest {
 
     @Mock
     private GoalService goalService;
@@ -30,6 +30,9 @@ public class GoalControllerTest {
     private Principal principal;
 
     @Mock
+    private String referer;
+
+    @Mock
     private Model model;
 
     @InjectMocks
@@ -39,7 +42,7 @@ public class GoalControllerTest {
     private Goal goal;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
         user = new User();
         user.setId(1L);
@@ -52,7 +55,7 @@ public class GoalControllerTest {
     }
 
     @Test
-    public void testGetAllGoals() {
+    void getAllGoals_shouldReturnGoalsView() {
         when(principal.getName()).thenReturn("testuser");
         when(userService.findByUsername("testuser")).thenReturn(user);
         when(goalService.findAllGoalsByUserId(1L)).thenReturn(List.of(goal));
@@ -64,26 +67,15 @@ public class GoalControllerTest {
     }
 
     @Test
-    public void testGetGoalById() {
-        when(goalService.findGoalById(1L)).thenReturn(goal);
-
-        Goal result = goalController.getGoalById(1L);
-        assertEquals(goal, result);
-    }
-
-    @Test
-    public void testShowCreateForm() {
+    void showCreateForm_shouldReturnForm() {
         String view = goalController.showCreateForm(model);
 
         assertEquals("create-goal", view);
         verify(model).addAttribute(eq("goal"), any(Goal.class));
-        verify(model).addAttribute(eq("minDate"), any());
-        verify(model).addAttribute(eq("maxDate"), any());
-        verify(model).addAttribute("formAction", "/goals/create");
     }
 
     @Test
-    public void testCreateGoal() {
+    void createGoal_shouldSaveGoalAndRedirect() {
         when(principal.getName()).thenReturn("testuser");
         when(userService.findByUsername("testuser")).thenReturn(user);
 
@@ -95,7 +87,7 @@ public class GoalControllerTest {
     }
 
     @Test
-    public void testDeleteGoal() {
+    void deleteGoal_shouldDeleteAndRedirect() {
         String result = goalController.deleteGoal(1L);
 
         assertEquals("redirect:/goals", result);
@@ -103,11 +95,11 @@ public class GoalControllerTest {
     }
 
     @Test
-    public void testEditGoal_AccessGranted() {
+    void editGoal_shouldReturnFormWhenAccessGranted() {
         when(goalService.findGoalById(1L)).thenReturn(goal);
         when(principal.getName()).thenReturn("testuser");
 
-        String view = goalController.editGoal(1L, model, principal);
+        String view = goalController.editGoal(1L, model);
 
         assertEquals("create-goal", view);
         verify(model).addAttribute("goal", goal);
@@ -115,7 +107,7 @@ public class GoalControllerTest {
     }
 
     @Test
-    public void testEditGoal_AccessDenied() {
+    void editGoal_shouldRedirectWhenAccessDenied() {
         User otherUser = new User();
         otherUser.setUsername("hacker");
         goal.setUser(otherUser);
@@ -123,33 +115,37 @@ public class GoalControllerTest {
         when(goalService.findGoalById(1L)).thenReturn(goal);
         when(principal.getName()).thenReturn("testuser");
 
-        String view = goalController.editGoal(1L, model, principal);
+        String view = goalController.editGoal(1L, model);
         assertEquals("redirect:/goals", view);
     }
 
     @Test
-    public void testUpdateGoal() {
+    void updateGoal_shouldUpdateAndRedirect() {
         when(goalService.findGoalById(1L)).thenReturn(goal);
         when(principal.getName()).thenReturn("testuser");
 
         Goal updated = new Goal();
         updated.setId(1L);
-        updated.setDescription("New");
-        updated.setDeadline(LocalDate.now().plusDays(10));
+        updated.setDescription("New Description");
+        updated.setDeadline(LocalDate.now().plusDays(7));
+        updated.setCompleted(true);
 
         String result = goalController.updateGoal(updated, principal);
 
         assertEquals("redirect:/goals", result);
-        assertEquals("New", goal.getDescription());
+        assertEquals("New Description", goal.getDescription());
+        assertTrue(goal.isCompleted());
         verify(goalService).save(goal);
     }
 
     @Test
-    public void testToggleGoalStatus() {
+    void toggleGoalStatus_shouldToggleAndRedirect_whenAccessGranted() {
+        goal.setCompleted(false);
+
         when(goalService.findGoalById(1L)).thenReturn(goal);
         when(principal.getName()).thenReturn("testuser");
 
-        String result = goalController.toggleGoalStatus(1L, principal, "/goals");
+        String result = goalController.toggleGoalStatus(1L, principal, referer);
 
         assertEquals("redirect:/goals", result);
         assertTrue(goal.isCompleted());
@@ -157,15 +153,15 @@ public class GoalControllerTest {
     }
 
     @Test
-    public void testToggleGoalStatus_AccessDenied() {
-        User hacker = new User();
-        hacker.setUsername("hacker");
-        goal.setUser(hacker);
+    void toggleGoalStatus_shouldRedirect_whenAccessDenied() {
+        User otherUser = new User();
+        otherUser.setUsername("hacker");
+        goal.setUser(otherUser);
 
         when(goalService.findGoalById(1L)).thenReturn(goal);
         when(principal.getName()).thenReturn("testuser");
 
-        String result = goalController.toggleGoalStatus(1L, principal, "/goals");
+        String result = goalController.toggleGoalStatus(1L, principal, referer);
 
         assertEquals("redirect:/access-denied", result);
     }
