@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reflect-Diary</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<main class="page-wrapper">
+    <div class="container">
+        <a th:href="@{/}">
+            <h1>Reflect-Diary</h1>
+        </a>
+        <div class="profile__content">
+            <div class="profile__info">
+                <div class="profile__card">
+                    <img th:src="@{/images/avatar-default.png}" alt="avatar.png">
+                    <h3 th:text="${user.username}">Name</h3>
+                    <p>Email:
+                        <span th:text="${user.email}"></span>
+                    </p>
+                    <p>
+                        Registration date:
+                        <span th:text="${#temporals.format(user.registrationDate, 'dd.MM.yyyy HH:mm')}"></span>
+                    </p>
+                </div>
+
+                <div class="profile__create-links--wrapper">
+                    <a class="profile__create-link" th:href="@{/goals/create}">Create new Goal</a>
+                    <a class="profile__create-link" th:href="@{/entries/create}">Create new Entry</a>
+                </div>
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="profile__logout-link">Sign out</button>
+                </form>
+            </div>
+
+            <div class="profile__activity">
+                <div class="profile__goals">
+                    <h2>Your goals</h2>
+                    <ul class="goals__list" th:if="${goals != null}">
+                        <li class="goal__item" th:each="goal : ${goals}">
+                            <div class="goal__top">
+                                <p class="goal__help-text">Deadline:
+                                    <span class="goal__date" th:text="${#temporals.format(goal.deadline, 'dd.MM.yyyy')}">2025-05-17</span></p>
+                                <form th:action="@{'/goals/' + ${goal.id} + '/toggle'}" method="post">
+                                    <button type="submit" class="goal__status"
+                                            th:text="${goal.completed ? '✓ Completed' : '⏳ In progress'}"
+                                            th:classappend="${goal.completed ? ' completed' : ' in-progress'}">
+                                    </button>
+                                </form>
+
+                            </div>
+                            <p class="goal__help-text">Goal description: </p>
+                            <p class="goal__desc" th:text="${goal.description}">Goal description</p>
+                        </li>
+                    </ul>
+                    <a class="goals__link" th:href="@{/goals}"> Show all your Goals</a>
+                </div>
+                <div class="profile__entries">
+                    <h2>Your entries</h2>
+                    <ul class="entries__list" th:if="${entries != null}">
+                        <li class="entry__item" th:each="entry : ${entries}">
+                            <div class="entry__top">
+                                <p class="entry__help-text">Date:
+                                    <span class="entry__date" th:text="${#temporals.format(entry.date, 'dd.MM.yyyy')}"></span>
+                                </p>
+                                <div class="entry__mood" th:classappend="'mood-' + ${entry.mood}" th:text="${entry.mood}">HAPPY</div>
+                            </div>
+                            <p class="entry__help-text">Your day: </p>
+                            <p class="entry__desc" th:text="${entry.mainText}">Your day</p>
+                        </li>
+                    </ul>
+                    <a class="entries__link" th:href="@{/entries}">Show all your Entries</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<div style="height: 40px;"></div>
+</body>
+</html>

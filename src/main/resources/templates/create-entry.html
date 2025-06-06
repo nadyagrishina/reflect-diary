@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reflect-Diary</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<main>
+    <div class="container">
+        <a th:href="@{/}">
+            <h1>Reflect-Diary</h1>
+        </a>
+        <h2>Create/Update Entry</h2>
+        <p>ENTRY ID: <span th:text="${entry.id}"></span></p>
+
+        <form th:action="@{${formAction}}"
+              th:object="${entry}"
+              method="post"
+              class="create-entry__form">
+            <input type="hidden" name="id" th:value="${entry.id}"/>
+            <div class="create-entry__inputs">
+                <div class="create-entry__column">
+
+
+                    <label for="date">Date</label>
+                    <input type="date" id="date" th:field="*{date}" required/>
+
+                    <label for="difficulties">Difficulties</label>
+                    <input type="text" id="difficulties" th:field="*{difficulties}" maxlength="1000"/>
+
+                    <label for="highlights">Highlights</label>
+                    <input type="text" id="highlights" th:field="*{highlights}" maxlength="1000"/>
+
+                    <label for="mood">Mood</label>
+                    <select id="mood" th:field="*{mood}" required>
+                        <option value="">-- Choose your mood --</option>
+                        <option value="HAPPY">😊 Happy</option>
+                        <option value="SAD">😢 Sad</option>
+                        <option value="NEUTRAL">😐 Neutral</option>
+                    </select>
+
+                    <label for="score">How would you rate your day (1–5)?</label>
+                    <input type="number" id="score" min="1" max="5" th:field="*{score}" required/>
+                    <label>Tags</label>
+                    <div class="chips">
+                        <div th:each="tag : ${allTags}" class="chip">
+                            <label>
+                                <input type="checkbox"
+                                       name="tags"
+                                       th:value="${tag.id}">
+                                <span th:text="${tag.name}"></span>
+                            </label>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="create-entry__column">
+                    <label for="text">Text</label>
+                    <textarea id="text" class="create-entry__form--text"
+                              th:field="*{mainText}" placeholder="Write about your day..." required
+                              maxlength="10000"></textarea>
+
+                    <label for="tomorrowPlan">Any plans for tomorrow?</label>
+                    <textarea id="tomorrowPlan" class="create-entry__form--tomorrow"
+                              th:field="*{tomorrowPlan}" placeholder="Plans, goals, to-do's..."
+                              maxlength="1000"></textarea>
+                    <div th:if="${questionMissing}">
+                        <p style="color:red">No reflection question available today 😢</p>
+                    </div>
+                    <div th:unless="${questionMissing}">
+                        <label>Reflection question</label>
+                        <p class="create-entry__form--question_text" th:text="${question.text}"></p>
+                        <input type="hidden" th:field="*{reflectionQuestionId}"/>
+                        <label for="questionAnswer"></label>
+                        <textarea class="create-entry__form-question" id="questionAnswer"
+                                  th:field="*{questionAnswer}" placeholder="Write your thoughts..."
+                                  maxlength="1000"></textarea>
+                    </div>
+
+                </div>
+
+
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reflect-Diary</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<main class="container">
+    <a th:href="@{/}">
+        <h1>Reflect-Diary</h1>
+    </a>
+    <h2>Your Entries</h2>
+    <p>Click an entry to view more details.</p>
+    <a class="profile__create-link" th:href="@{/entries/create}">Create new Entry</a>
+    <a th:href="@{/}" class="back-link">← Back to profile</a>
+    <ul class="entries__list" th:if="${entries != null}">
+
+        <li class="entry__item" th:each="entry : ${entries}">
+            <div>
+                <a th:href="@{'/entries/' + ${entry.id}}">
+                    <div class="entry__top">
+                        <p class="entry__help-text">Date:
+                            <span class="entry__date" th:text="${#temporals.format(entry.date, 'dd.MM.yyyy')}"></span>
+                        </p>
+                        <div class="entry__mood" th:classappend="'mood-' + ${entry.mood}" th:text="${entry.mood}">HAPPY
+                        </div>
+                    </div>
+                    <p class="entry__help-text">Your day: </p>
+                    <p class="entry__desc" th:text="${entry.mainText}">Your day</p>
+                </a>
+                <div class="entry__action-buttons">
+                    <form th:action="@{'/entries/+' + ${entry.id} + '/delete'}" method="post">
+                        <button type="submit" class="delete__button">Delete</button>
+                    </form>
+                    <a th:href="@{'/entries/' + ${entry.id} + '/edit'}">Edit</a>
+                </div>
+            </div>
+        </li>
+    </ul>
+</main>
+<div style="height: 40px;"></div>
+</body>
+</html>
