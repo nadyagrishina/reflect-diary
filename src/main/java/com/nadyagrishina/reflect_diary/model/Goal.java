@@ -1,6 +1,10 @@
 package com.nadyagrishina.reflect_diary.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
@@ -13,12 +17,16 @@ public class Goal {
     @Column(name = "id")
     private Long id;
 
+    @NotBlank
+    @Size(min = 1, max = 10000)
     @Column(name = "description")
     private String description;
 
     @Column(name = "is_completed")
     private boolean completed;
 
+    @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "deadline")
     private LocalDate deadline;
 

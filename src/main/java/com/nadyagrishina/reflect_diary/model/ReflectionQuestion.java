@@ -1,6 +1,8 @@
 package com.nadyagrishina.reflect_diary.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
@@ -13,18 +15,17 @@ public class ReflectionQuestion {
     @Column(name = "id")
     private Long id;
 
+    @NotBlank
+    @Size(min = 1, max = 1000)
     @Column(name = "text")
     private String text;
 
-    @OneToMany(mappedBy = "reflectionQuestion")
-    private List<Entry> entries;
 
     public ReflectionQuestion() {
     }
 
-    public ReflectionQuestion(String text, List<Entry> entries) {
+    public ReflectionQuestion(String text) {
         this.text = text;
-        this.entries = entries;
     }
 
     public Long getId() {
@@ -43,11 +44,4 @@ public class ReflectionQuestion {
         this.text = text;
     }
 
-    public List<Entry> getEntries() {
-        return entries;
-    }
-
-    public void setEntries(List<Entry> entries) {
-        this.entries = entries;
-    }
 }

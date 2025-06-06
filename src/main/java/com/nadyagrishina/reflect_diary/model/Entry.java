@@ -1,6 +1,8 @@
 package com.nadyagrishina.reflect_diary.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,24 +16,34 @@ public class Entry {
     @Column(name = "id")
     private Long id;
 
+    @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name = "date")
     private LocalDate date;
 
+    @NotBlank
+    @Size(min = 1, max = 10000)
     @Column(name = "main_text")
     private String mainText;
 
+    @Size(max = 1000)
     @Column(name = "highlights")
     private String highlights;
 
+    @Size(max = 1000)
     @Column(name = "difficulties")
     private String difficulties;
 
+    @Size(max = 1000)
     @Column(name = "tomorrow_plan")
     private String tomorrowPlan;
 
+    @Min(1)
+    @Max(5)
     @Column(name = "score")
     private int score;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "mood")
     private Mood mood;
@@ -43,11 +55,13 @@ public class Entry {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "reflection_question_id")
-    private ReflectionQuestion reflectionQuestion;
+    @Column(name = "reflection_question_id")
+    private Long reflectionQuestionId;
 
-    @ManyToMany
+    @Column(name = "question_answer")
+    private String questionAnswer;
+
+    @ManyToMany (fetch = FetchType.EAGER)
     @JoinTable(
             name = "entry_tag",
             joinColumns = @JoinColumn(name = "entry_id"),
@@ -59,7 +73,7 @@ public class Entry {
     public Entry() {
     }
 
-    public Entry(LocalDate date, String mainText, String highlights, String difficulties, String tommorowPlan, int score, Mood mood, LocalDateTime createdAt, User user,  List<Tag> tags,  ReflectionQuestion reflectionQuestion) {
+    public Entry(LocalDate date, String mainText, String highlights, String difficulties, String tommorowPlan, int score, Mood mood, LocalDateTime createdAt, User user,  List<Tag> tags) {
         this.date = date;
         this.mainText = mainText;
         this.highlights = highlights;
@@ -70,7 +84,6 @@ public class Entry {
         this.createdAt = createdAt;
         this.user = user;
         this.tags = tags;
-        this.reflectionQuestion = reflectionQuestion;
     }
 
     public Long getId() {
@@ -78,8 +91,9 @@ public class Entry {
     }
 
     public void setId(Long id) {
-        id = id;
+        this.id = id;
     }
+
 
     public LocalDate getDate() {
         return date;
@@ -161,11 +175,19 @@ public class Entry {
         this.tags = tags;
     }
 
-    public ReflectionQuestion getReflectionQuestion() {
-        return reflectionQuestion;
+    public String getQuestionAnswer() {
+        return questionAnswer;
     }
 
-    public void setReflectionQuestion(ReflectionQuestion reflectionQuestion) {
-        this.reflectionQuestion = reflectionQuestion;
+    public void setQuestionAnswer(String questionAnswer) {
+        this.questionAnswer = questionAnswer;
+    }
+
+    public Long getReflectionQuestionId() {
+        return reflectionQuestionId;
+    }
+
+    public void setReflectionQuestionId(Long reflectionQuestionId) {
+        this.reflectionQuestionId = reflectionQuestionId;
     }
 }

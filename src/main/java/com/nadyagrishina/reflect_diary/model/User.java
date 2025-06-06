@@ -1,7 +1,11 @@
 package com.nadyagrishina.reflect_diary.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -12,30 +16,45 @@ public class User {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "username")
+    @NotBlank
+    @Size(min = 2, max = 50)
+    @Column(name = "username", unique = true,  nullable = false, length = 50)
     private String username;
 
-    @Column(name = "password")
+    @NotBlank
+    @Size(min = 6, max = 100)
+    @Column(name = "password", length = 100)
     private String password;
 
-    @Column(name = "email")
+    @Email
+    @NotBlank
+    @Size(min = 3, max = 100)
+    @Column(name = "email",  length = 100, nullable = false, unique = true)
     private String email;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @Column(name = "registration_date")
+    private LocalDateTime registrationDate;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Entry> entries;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Goal> goals;
 
     public User() {
     }
 
-    public User(String username, String password, String email, List<Entry> entries,  List<Goal> goals) {
+    public User(String username, String password, String email, List<Entry> entries,  List<Goal> goals, Role role) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.entries = entries;
         this.goals = goals;
+        this.role = role;
     }
 
     public Long getId() {
@@ -85,5 +104,22 @@ public class User {
     public void setGoals(List<Goal> goals) {
         this.goals = goals;
     }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public LocalDateTime getRegistrationDate() {
+        return registrationDate;
+    }
+
+    public void setRegistrationDate(LocalDateTime registrationDate) {
+        this.registrationDate = registrationDate;
+    }
+
 }
 

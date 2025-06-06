@@ -1,6 +1,8 @@
 package com.nadyagrishina.reflect_diary.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
@@ -13,6 +15,8 @@ public class Tag {
     @Column(name = "id")
     private Long id;
 
+    @NotEmpty
+    @Size(min = 1, max = 255)
     @Column(name = "name")
     private String name;
 
