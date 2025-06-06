@@ -8,12 +8,12 @@ import com.nadyagrishina.reflect_diary.service.EntryService;
 import com.nadyagrishina.reflect_diary.service.ReflectionQuestionService;
 import com.nadyagrishina.reflect_diary.service.TagService;
 import com.nadyagrishina.reflect_diary.service.UserService;
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -69,6 +69,7 @@ public class EntryController {
         }
         model.addAttribute("entry", entry);
         model.addAttribute("allTags", tagService.findAllTags());
+        model.addAttribute("selectedTags", new ArrayList<>());
         return "create-entry";
     }
 
@@ -104,6 +105,7 @@ public class EntryController {
         }
 
         model.addAttribute("allTags", tagService.findAllTags());
+        model.addAttribute("selectedTags",  entry.getTags());
         model.addAttribute("question", reflectionQuestionService.findById(entry.getReflectionQuestionId()));
         model.addAttribute("entry", entry);
         model.addAttribute("formAction", "/entries/update");
@@ -125,7 +127,7 @@ public class EntryController {
         if (tagIds != null) {
             originalEntry.setTags(tagService.findAllById(tagIds));
         } else {
-            originalEntry.setTags(List.of());
+            originalEntry.setTags(new ArrayList<>());
         }
 
         originalEntry.setScore(entryFromForm.getScore());
@@ -139,6 +141,8 @@ public class EntryController {
         originalEntry.setQuestionAnswer(entryFromForm.getQuestionAnswer());
 
         entryService.save(originalEntry);
+        System.out.println("originalEntry: " + originalEntry);
+
         return "redirect:/entries";
     }
 }

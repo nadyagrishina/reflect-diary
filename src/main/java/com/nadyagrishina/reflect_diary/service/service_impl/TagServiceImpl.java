@@ -1,5 +1,6 @@
 package com.nadyagrishina.reflect_diary.service.service_impl;
 
+import com.nadyagrishina.reflect_diary.model.Entry;
 import com.nadyagrishina.reflect_diary.model.Tag;
 import com.nadyagrishina.reflect_diary.repository.EntryRepository;
 import com.nadyagrishina.reflect_diary.repository.TagRepository;
@@ -46,4 +47,9 @@ public class TagServiceImpl implements TagService {
         return tagRepository.findAllById(tagIds);
     }
 
+    @Override
+    public List<Tag> findAllByEntryId(Long entryId) {
+        Entry entry = entryRepository.findById(entryId).orElseThrow(() -> new EntityNotFoundException("Entry not found with id: " + entryId));
+        return entry.getTags();
+    }
 }

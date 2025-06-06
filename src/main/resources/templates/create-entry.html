@@ -12,8 +12,6 @@
             <h1>Reflect-Diary</h1>
         </a>
         <h2>Create/Update Entry</h2>
-        <p>ENTRY ID: <span th:text="${entry.id}"></span></p>
-
         <form th:action="@{${formAction}}"
               th:object="${entry}"
               method="post"
@@ -21,7 +19,6 @@
             <input type="hidden" name="id" th:value="${entry.id}"/>
             <div class="create-entry__inputs">
                 <div class="create-entry__column">
-
 
                     <label for="date">Date</label>
                     <input type="date" id="date" th:field="*{date}" required/>
@@ -48,7 +45,8 @@
                             <label>
                                 <input type="checkbox"
                                        name="tags"
-                                       th:value="${tag.id}">
+                                       th:value="${tag.id}"
+                                       th:checked="${selectedTags.contains(tag)}">
                                 <span th:text="${tag.name}"></span>
                             </label>
                         </div>

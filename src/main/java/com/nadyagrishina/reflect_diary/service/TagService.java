@@ -9,4 +9,5 @@ public interface TagService {
     Tag findTagById(Long id);
     Tag createTag(String tagName);
     List<Tag> findAllById(List<Long> TagIds);
+    List<Tag> findAllByEntryId(Long entryId);
 }
