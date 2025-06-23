@@ -1,6 +1,7 @@
 package com.nadyagrishina.reflect_diary.service;
 
 import com.nadyagrishina.reflect_diary.model.User;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 
@@ -12,4 +13,6 @@ public interface UserService {
     void delete(Long id);
     User findByUsername(String username);
     boolean existsByUsername(String username);
+    User updateUserPreferences(User username);
+
 }

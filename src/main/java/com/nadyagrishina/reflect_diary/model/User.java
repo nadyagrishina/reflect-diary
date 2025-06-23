@@ -39,6 +39,9 @@ public class User {
     @Column(name = "registration_date")
     private LocalDateTime registrationDate;
 
+    @Column(name = "dark_mode_preference")
+    private boolean darkModeEnabled = false;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Entry> entries;
 
@@ -121,5 +124,12 @@ public class User {
         this.registrationDate = registrationDate;
     }
 
+    public boolean isDarkModeEnabled() {
+        return darkModeEnabled;
+    }
+
+    public void setDarkModeEnabled(boolean darkModeEnabled) {
+        this.darkModeEnabled = darkModeEnabled;
+    }
 }
 
