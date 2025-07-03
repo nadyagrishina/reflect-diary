@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title>Reflect-Diary</title>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
@@ -55,7 +56,7 @@
                             <p class="goal__desc" th:text="${goal.description}">Goal description</p>
                         </li>
                     </ul>
-                    <a class="goals__link" th:href="@{/goals}"> Show all your Goals</a>
+                    <a class="goals__link" th:href="@{/goals}"> Show all your Goals</a>	
                 </div>
                 <div class="profile__entries">
                     <h2>Your entries</h2>
