@@ -563,8 +563,77 @@ input::placeholder{
     margin-right: 3px;
 }
 
+.dark-mode-toggle-wrapper {
+    position: fixed;
+    top: 10px;
+    right: 10px; !i
+    z-index: 1000;
+}
+
+#toggleDarkMode {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  transition: transform 0.5s ease;
+}
+
+#toggleDarkMode:hover {
+  transform: scale(1.2);
+}
+
 body.dark-mode {
   background-color: #121212;
   color: #e0e0e0;
 }
+
+body.dark-mode {
+    background-color: #121212;
+    color: #f0f0f0;
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3 {
+    color: var(--accent-color);
+}
+
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border: 1px solid #444;
+}
+
+body.dark-mode button {
+    color: #ffffff;
+}
+
+body.dark-mode .profile__card,
+body.dark-mode .profile__info,
+body.dark-mode .goal__item,
+body.dark-mode .entry__item {
+    background-color: #1a1a1a;
+    border-color: #333;
+    color: #ffffff;
+}
+
+body.dark-mode .goal__help-text,
+body.dark-mode .entry__help-text {
+    color: #cccccc;
+}
+
+body.dark-mode .goal__desc {
+    color: #ffffff
+}
+
+body.dark-mode  label{
+    color: #f0f0f0;
+}
+
+body.dark-mode a{
+color: #f0f0f0
+}
+
 
