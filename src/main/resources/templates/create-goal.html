@@ -4,16 +4,18 @@
     <meta charset="UTF-8">
     <title>Reflect-Diary</title>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
-    <script th:src="@{/js/script.js}" defer></script>
+    <script th:src="@{/js/darkmode.js}" defer></script>
 </head>
-<body>
+<body th:attr="data-logged-in=${#authorization.expression('isAuthenticated()')}">
+<div class="dark-mode-toggle-wrapper">
+    <button id="toggleDarkMode" title="Toggle dark mode">🌓</button>
+</div>
 <main>
     <div class="create-goal__content container">
         <a th:href="@{/}">
             <h1>Reflect-Diary</h1>
         </a>
         <div class="create-goal__form--wrapper">
-            <button id="dark-toggle">🌙 Dark Mode</button>
             <div><h2>Create/Update Goal</h2></div>
             <form th:object="${goal}"
                   th:action="@{${formAction}}"

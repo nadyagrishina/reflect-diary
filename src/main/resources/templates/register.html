@@ -4,9 +4,12 @@
     <meta charset="UTF-8">
     <title>Reflect-Diary</title>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
-    <script th:src="@{/js/script.js}" defer></script>
+    <script th:src="@{/js/darkmode.js}" defer></script>
 </head>
-<body>
+<body th:attr="data-logged-in=${#authorization.expression('isAuthenticated()')}">
+<div class="dark-mode-toggle-wrapper">
+    <button id="toggleDarkMode" title="Toggle dark mode">🌓</button>
+</div>
 <main>
     <div class="container register__content">
         <h1>Create an account</h1>
