@@ -39,6 +39,8 @@
     --details-color: #D4C2A8;
     --placeholder-color: #777;
     --input-border: #D4C2A8;
+    --accent-color-dark-mode: #88B6A5;
+    --main-color-hover-dark-mode: #E16B73;
 
     --soft-red: #f28b82;
     --soft-blue: #64b5f6;
@@ -161,12 +163,28 @@ input::placeholder{
     background: linear-gradient(135deg, var(--main-color), var(--main-color-hover));
 }
 
+body.dark-mode .login__content button[type="submit"],
+.register__content button[type="submit"],
+.create-entry__form button[type="submit"],
+.create-goal__form button[type="submit"]{
+    background: linear-gradient(135deg, var(--main-color), var(--main-color-hover-dark-mode));
+}
+
 
 .login__content button[type="submit"]:hover,
 .register__content button[type="submit"]:hover,
 .create-entry__form button[type="submit"]:hover,
 .create-goal__form button[type="submit"]:hover{
     background-color: var(--main-color-hover);
+    transform: scale(1.03);
+    box-shadow: 0 4px 10px rgba(90, 10, 135, 0.3);
+}
+
+body.dark-mode .login__content button[type="submit"]:hover,
+.register__content button[type="submit"]:hover,
+.create-entry__form button[type="submit"]:hover,
+.create-goal__form button[type="submit"]:hover{
+    background-color: var(--main-color-hover-dark-mode);
     transform: scale(1.03);
     box-shadow: 0 4px 10px rgba(90, 10, 135, 0.3);
 }
@@ -243,6 +261,10 @@ input::placeholder{
     transform: scale(1.03);
     background-color: var(--main-color-hover);
     box-shadow: 0 4px 10px rgba(90, 10, 135, 0.3);
+}
+
+body.dark-mode .profile__create-link:hover {
+    background-color: var(--main-color-hover-dark-mode);
 }
 
 .profile__logout-link {
@@ -340,6 +362,10 @@ input::placeholder{
     border-left: 2px solid var(--main-color-hover)
 }
 
+body.dark-mode .entry__item {
+    border-left: 2px solid var(--main-color-hover-dark-mode)
+}
+
 .entry__item a {
     display: block;
 }
@@ -417,6 +443,10 @@ input::placeholder{
 .entries__link{
     background-color: var(--main-color-hover);
 }
+
+body.dark-mode .entries__link{
+    background-color: var(--main-color-hover-dark-mode);
+    }
 
 .profile__info {
     background: white;
@@ -583,19 +613,15 @@ input::placeholder{
 }
 
 body.dark-mode {
-  background-color: #121212;
+  background-color: #1e1e1e;
   color: #e0e0e0;
-}
-
-body.dark-mode {
-    background-color: #121212;
-    color: #f0f0f0;
+  background-image: none;
 }
 
 body.dark-mode h1,
 body.dark-mode h2,
 body.dark-mode h3 {
-    color: var(--accent-color);
+    color: var(--accent-color-dark-mode);
 }
 
 body.dark-mode input,
