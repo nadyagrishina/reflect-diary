@@ -1,11 +1,21 @@
-const toggle = document.getElementById('dark-toggle');
-const theme = localStorage.getItem('theme');
+document.addEventListener('DOMContentLoaded', () => {
+    const toggleBtn = document.getElementById("toggleDarkMode");
+    if (!toggleBtn) return;
 
-if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-  document.body.classList.add('dark-mode');
-}
+    if (localStorage.getItem("darkMode") === "true") {
+        document.body.classList.add("dark-mode");
+    }
 
-toggle?.addEventListener('click', () => {
-  document.body.classList.toggle('dark-mode');
-  localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+    updateIcon();
+
+    toggleBtn.addEventListener("click", () => {
+        const isDark = document.body.classList.toggle("dark-mode");
+        localStorage.setItem("darkMode", isDark);
+        updateIcon();
+    });
+
+    function updateIcon() {
+        const isDark = document.body.classList.contains("dark-mode");
+        toggleBtn.textContent = isDark ? "☀️" : "🌓";
+    }
 });
